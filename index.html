@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Hydra Sublenguaje</title>
+  <script src="https://unpkg.com/hydra-synth"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background: black;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+    }
+
+    #input {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      max-width: 600px;
+      height: 80px;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      font-size: 18px;
+      border: 2px solid white;
+      border-radius: 10px;
+      padding: 10px;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+      resize: none;
+    }
+  </style>
+</head>
+<body>
+  <textarea id="input" placeholder="Escribe: pabaras y letras cortas"></textarea>
+
+  <script>
+    const hydra = new Hydra({ detectAudio: false });
+
+    const palabras = {
+intervención: () => voronoi(.5).saturate(1.01).scale(.7).color(2.5,2,7).hue(.02).modulateHue(src(o1).hue(.7).posterize(-3).contrast(.5),2).layer(src(o1).mult(gradient(1).saturate(.7))).out(intervención),
+discurso: () => osc(200, 0).kaleid(200).scale(1, 0.4).scrollX(0.1, 0.01).color(2,3,4).out(),
+tejido: () => osc(10,-0.0018,0.17).diff(osc(10,0.00008).rotate(Math.PI/0.0003)).modulateScale(noise(1.5,0.18).modulateScale(osc(13).rotate(()=>Math.sin(time/22))),3),
+.color(26,0.5,0.4, 0.9, 0.2, 0.011, 5, 22,  15,1).contrast(1.4).add(src(o0).modulate(o0,4),0.6,9).invert().brightness(0.3, 2).contrast( 0.5, 2, 0.1, 2).color(4, 2, 0.1).modulateScale(osc(4),0.2, 2, 1, 0.3).posterize(20) .rotate(1, 0.2, 0.01, 0.001).color(22, 14, 13, 3, 7,  4, 0.2, 8).contrast(0.18, 0.3, 0.1, 0.2, 0.03, 1).brightness(0.0001, -1, 10).out(),
+contacto: () => osc(0.5,1.25).mult(shape(0.07,0.09).rotate(1.5)).diff(gradient()).add(shape(2,2).bend(gradient(2))).modulate(noise().scrollY(0.08,0.05)).color(3,0.5,0.75).out(),
+adaptación=shape(1,1).mult(voronoi(10000,3).blend(o0).luma()).colorama(13,4,6).add(shape(45,0.125).rotate(4,1).mult(voronoi(1000,5).luma()).rotate(1.5)).scrollX([0.1,0.625,0.5,0.00001],0).scrollY([7,-0.7,0.005,0.0001],0).out(),
+confusión: () => .shape(5,0.2,0.3).color(0.5,4,20).scale(Math.sin(time)+1*2).repeat(Math.sin(time)*5).scale(Math.sin(time)+1*1.5).modulate(noise(2,2)).rotate(1,0.2).invert(4.out(),
+estándar: () => osc(5, 0.01, 0.1).mult(osc(4, 2.7).modulate(osc(7).rotate(4,8), 32)).color(7,3,15).saturate(2.4).luma(13,9, (6, ()=> 1 + a.fft[7])).scale(0.7, ()=> 2.7 + a.fft[2]).diff().out(),
+sustancia: () => osc(20, 0.01, 1.1).kaleid(40).color(38,9.1,3.9).rotate(0, 0.1).modulate(o0, () => mouse.x * 0.0003).scale(1.01).out(),
+intervención: () =>() => voronoi(.5).saturate(1.01).scale(.7).color(2.5,2,7).hue(.02).modulateHue(src(o1).hue(.7).posterize(-3).contrast(.5),2).layer(src(o1).mult(gradient(1).saturate(.7))).out(intervención),
+discurso: () => => osc(200, 0).kaleid(200).scale(1, 0.4).scrollX(0.1, 0.01).color(2,3,4).out(),
+
+
+
+magt : () => {
+  osc(40,0.5,() => a.fft[0]*200).out(o2)
+  let shape = osc(60, 0.1, 2)
+    .mult(noise(1, 4))
+    .rotate(() => (Math.random() - 0.5) * 0.5 + Math.sin(time * 0.2) * 0.2)
+  shape.out(o0)
+  return shape
+},
+};
+
+    const input = document.getElementById("input");
+
+    input.addEventListener("input", () => {
+      const texto = input.value.toLowerCase().trim();
+
+      // Si contiene comas: modulación encadenada
+      if (texto.includes(",")) {
+        const modWords = texto.split(",").map(w => w.trim()).filter(w => palabras[w]);
+        if (modWords.length >= 2) {
+          let base = palabras[modWords[0]]();
+          for (let i = 1; i < modWords.length; i++) {
+            base = palabras[modWords[i]]().modulate(base, 0.5 + 0.3 * Math.random()); // modulación aleatoria
+          }
+          base.out();
+          return;
+        }
+      }
+
+      // Si contiene comas: modulación encadenada
+      if (texto.includes("x")) {
+        const modWords = texto.split(",").map(w => w.trim()).filter(w => palabras[w]);
+        if (modWords.length >= 2) {
+          let base = palabras[modWords[0]]();
+          for (let i = 1; i < modWords.length; i++) {
+            base = palabras[modWords[i]]().modulateScale(base, 0.5 + 0.3 * Math.random()); // modulación aleatoria
+          }
+          base.out();
+          return;
+        }
+      }
+
+      // Si no hay coma, renderiza todo en capas independientes
+      const entradas = texto.split(/\s+/).map(w => w.trim()).filter(w => palabras[w]);
+      if (entradas.length > 0) {
+        // Componer blend entre todas
+        let comp = palabras[entradas[0]]();
+        for (let i = 1; i < entradas.length; i++) {
+          comp = comp.diff(palabras[entradas[i]](), 0.5);
+        }
+        comp.out();
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
